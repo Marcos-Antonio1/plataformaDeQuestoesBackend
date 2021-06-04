@@ -1,4 +1,3 @@
-const { response } = require("express");
 const questionsServices = require("../services/questionsServices");
 const question = new questionsServices();
 class questionsController {
@@ -27,6 +26,16 @@ class questionsController {
       return res.send(dados)
     }catch(err){
       return res.send(err)
+    }
+  }
+  async responseItem(req,res){
+    try{
+      const id = req.params.id;
+      const op = req.body.op;
+      const response = await question.responseItem(id,op)
+      return res.json(response).status(200)
+    }catch(err){
+      return res.send(err).status(500)
     }
   }
 }

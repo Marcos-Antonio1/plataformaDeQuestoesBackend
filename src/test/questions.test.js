@@ -1,7 +1,11 @@
 const axios = require ('axios')
 const crypt = require('crypto');
+const materiaService = require('../services/materiaServices')
 const questionServices = require('../services/questionsServices')
-const questions= new questionServices()
+const assuntoServices = require("../services/assuntoServices");
+const questions= new questionServices();
+const materia = new materiaService();
+const assunto = new assuntoServices();
 
 const generate = ()=>{
   return crypt.randomBytes(20).toString('hex')
@@ -13,6 +17,42 @@ const request = function(url,method,data){
     data
   })
 }
+test("Should be a register a new materia",async ()=>{
+    const data = {
+      nome:generate()
+    }
+    const response = await request('http://localhost:8000/criarmateria',"post",data)
+    if(response.data){
+      const id = response.data[0]
+       await materia.delete(id) 
+    }
+    const resul = typeof(response.data[0])
+    expect(resul).toBe('number');
+})
+
+test.only("Should be a register a new assunto", async()=>{
+    let nome=generate()
+    const newmateria = await materia.create(nome)
+
+    const idMateria= newmateria[0];
+
+    const data = {
+      nome:generate(),
+      id:idMateria  
+    }
+    console.log(data)
+    const response = await request('http://localhost:8000/criarassunto',"post",data)
+    
+    if(response.data){
+      const id = response.data[0]
+      await assunto.delete(id) 
+    }
+    await materia.delete(idMateria)
+
+    const resul = typeof(response.data[0])
+    expect(resul).toBe('number')
+})
+
 test('Should be a register a true or false new question',async()=>{
   const data = {
       enunciado:generate(),
@@ -107,4 +147,25 @@ test('should return all registers',async()=>{
 
    await questions.delete(id0)
    await questions.delete(id1)     
+})
+
+test('Should be response the question right or wrong',async()=>{
+  const data = {
+    enunciado:generate(),
+    questao_verdadeira_falsa:true,
+    questao_certa:true,
+    materia:generate(),
+    assunto:generate(),
+    dificuldade:'1'
+  }
+  const qu1= await questions.create(data)
+  const id = qu1[0]
+  let dados = {
+    op: true
+  }
+  const resposta = await request(`http://localhost:8000/resposta/${id}`,'post',dados)
+  
+  await questions.delete(id)
+  expect(resposta.data.resposta).toBe(resposta.data.resposta);
+  expect(resposta.data.questao).toBe(resposta.data.questao);
 })

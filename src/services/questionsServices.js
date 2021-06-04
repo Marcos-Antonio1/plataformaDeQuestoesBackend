@@ -36,5 +36,17 @@ class questionsServices {
   async searchAll(){
      return await connection('questoes').select('*')
   }
+  async getQuestionById(idquestion){
+    return await connection('questoes').where({id:idquestion}).select('*')
+  } 
+  async responseItem(id,op){
+    try{
+      const ques = await this.getQuestionById(id)
+      if(op == ques[0].questao_certa) return {"resposta":'correta','questao': ques ? 'certa' :'errada'}
+      return {"resposta":"errada",'questao': ques ? 'certa' :'errada'}    
+    }catch(err){
+      throw err;
+    }
+  }
 }
 module.exports= questionsServices;

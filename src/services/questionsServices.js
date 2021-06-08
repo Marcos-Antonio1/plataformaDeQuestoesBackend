@@ -6,7 +6,7 @@ class questionsServices {
         return await connection('questoes').insert({ enunciado_questao:questao.enunciado,
         questao_verdadeira_falsa:questao.questao_verdadeira_falsa ,
         questao_certa:questao.questao_certa,
-        materia:questao.materia,assunto:questao.assunto,dificuldade:questao.dificuldade})
+       assunto_id_fk:questao.assunto_id_fk,dificuldade:questao.dificuldade})
       }catch(err){
         throw err;
       }
@@ -19,7 +19,7 @@ class questionsServices {
         opcao_d:questao.opcao_d,
         opcao_e:questao.opcao_e,
         opcao_certa:questao.opcao_certa,
-        materia:questao.materia,assunto:questao.assunto,dificuldade:questao.dificuldade
+        assunto_id_fk:questao.assunto_id_fk,dificuldade:questao.dificuldade
         });
       }catch(err){
         throw err;
